@@ -1,0 +1,234 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyO1mmp0iU5MikhEcyMrqhvI",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/yneeraj18/MLA---0204-ML/blob/main/Program%202ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "O2xLG8Ce0_pn",
+        "outputId": "65035691-7840-4eca-9d76-b22b713b5cd6"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "The training instances are:\n",
+            "['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'yes']\n",
+            "['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'yes']\n",
+            "['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'no']\n",
+            "['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'yes']\n",
+            "\n",
+            " The total number of training instances are :  4\n",
+            "\n",
+            " The initial hypothesis is : \n",
+            "['0', '0', '0', '0', '0', '0']\n",
+            "\n",
+            " The hypothesis for the training instance 1 is :\n",
+            " ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same']\n",
+            "\n",
+            " The hypothesis for the training instance 2 is :\n",
+            " ['Sunny', 'Warm', '?', 'Strong', 'Warm', 'Same']\n",
+            "\n",
+            " The hypothesis for the training instance 3 is :\n",
+            " ['Sunny', 'Warm', '?', 'Strong', 'Warm', 'Same']\n",
+            "\n",
+            " The hypothesis for the training instance 4 is :\n",
+            " ['Sunny', 'Warm', '?', 'Strong', '?', '?']\n",
+            "\n",
+            " The Maximally specific hypothesis for the training instance is \n",
+            "['Sunny', 'Warm', '?', 'Strong', '?', '?']\n"
+          ]
+        }
+      ],
+      "source": [
+        "import csv\n",
+        "\n",
+        "# Defining the training data directly as a list of lists\n",
+        "# Attributes: Sky, AirTemp, Humidity, Wind, Water, Forecast, EnjoySport (Target)\n",
+        "a = [\n",
+        "    ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'yes'],\n",
+        "    ['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'yes'],\n",
+        "    ['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'no'],\n",
+        "    ['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'yes']\n",
+        "]\n",
+        "\n",
+        "print(\"The training instances are:\")\n",
+        "for row in a:\n",
+        "    print(row)\n",
+        "\n",
+        "print(\"\\n The total number of training instances are : \", len(a))\n",
+        "num_attribute = len(a[0]) - 1\n",
+        "\n",
+        "print(\"\\n The initial hypothesis is : \")\n",
+        "hypothesis = ['0'] * num_attribute\n",
+        "print(hypothesis)\n",
+        "\n",
+        "for i in range(0, len(a)):\n",
+        "    if a[i][num_attribute] == 'yes':\n",
+        "        for j in range(0, num_attribute):\n",
+        "            if hypothesis[j] == '0' or hypothesis[j] == a[i][j]:\n",
+        "                hypothesis[j] = a[i][j]\n",
+        "            else:\n",
+        "                hypothesis[j] = '?'\n",
+        "    print(\"\\n The hypothesis for the training instance {} is :\\n\".format(i + 1), hypothesis)\n",
+        "\n",
+        "print(\"\\n The Maximally specific hypothesis for the training instance is \")\n",
+        "print(hypothesis)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "\n",
+        "# Defining the dataset directly as a Pandas DataFrame to avoid FileNotFoundError\n",
+        "data = pd.DataFrame([\n",
+        "    ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'yes'],\n",
+        "    ['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'yes'],\n",
+        "    ['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'no'],\n",
+        "    ['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'yes']\n",
+        "], columns=['Sky', 'AirTemp', 'Humidity', 'Wind', 'Water', 'Forecast', 'EnjoySport'])\n",
+        "\n",
+        "concepts = np.array(data.iloc[:,0:-1])\n",
+        "print(\"Concepts:\\n\", concepts)\n",
+        "target = np.array(data.iloc[:,-1])\n",
+        "print(\"Target:\\n\", target)\n",
+        "\n",
+        "def learn(concepts, target):\n",
+        "    specific_h = concepts[0].copy()\n",
+        "    print(\"initialization of specific_h and general_h\")\n",
+        "    print(specific_h)\n",
+        "    general_h = [[\"?\" for i in range(len(specific_h))] for i in range(len(specific_h))]\n",
+        "    print(general_h)\n",
+        "    for i, h in enumerate(concepts):\n",
+        "        if target[i] == \"yes\":\n",
+        "            for x in range(len(specific_h)):\n",
+        "                if h[x] != specific_h[x]:\n",
+        "                    specific_h[x] = '?'\n",
+        "                    general_h[x][x] = '?'\n",
+        "        print(specific_h)\n",
+        "        if target[i] == \"no\":\n",
+        "            for x in range(len(specific_h)):\n",
+        "                if h[x] != specific_h[x]:\n",
+        "                    general_h[x][x] = specific_h[x]\n",
+        "                else:\n",
+        "                    general_h[x][x] = '?'\n",
+        "        print(\" steps of Candidate Elimination Algorithm\", i+1)\n",
+        "        print(specific_h)\n",
+        "        print(general_h)\n",
+        "    indices = [i for i, val in enumerate(general_h) if val == ['?', '?', '?', '?', '?', '?']]\n",
+        "    for i in indices:\n",
+        "        general_h.remove(['?', '?', '?', '?', '?', '?'])\n",
+        "    return specific_h, general_h\n",
+        "\n",
+        "s_final, g_final = learn(concepts, target)\n",
+        "print(\"Final Specific_h:\", s_final, sep=\"\\n\")\n",
+        "print(\"Final General_h:\", g_final, sep=\"\\n\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "km0xWwoX8gBu",
+        "outputId": "6e203d5a-36b8-4388-f19d-d9885043b5cb"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Concepts:\n",
+            " [['Sunny' 'Warm' 'Normal' 'Strong' 'Warm' 'Same']\n",
+            " ['Sunny' 'Warm' 'High' 'Strong' 'Warm' 'Same']\n",
+            " ['Rainy' 'Cold' 'High' 'Strong' 'Warm' 'Change']\n",
+            " ['Sunny' 'Warm' 'High' 'Strong' 'Cool' 'Change']]\n",
+            "Target:\n",
+            " ['yes' 'yes' 'no' 'yes']\n",
+            "initialization of specific_h and general_h\n",
+            "['Sunny' 'Warm' 'Normal' 'Strong' 'Warm' 'Same']\n",
+            "[['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?']]\n",
+            "['Sunny' 'Warm' 'Normal' 'Strong' 'Warm' 'Same']\n",
+            " steps of Candidate Elimination Algorithm 1\n",
+            "['Sunny' 'Warm' 'Normal' 'Strong' 'Warm' 'Same']\n",
+            "[['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?']]\n",
+            "['Sunny' 'Warm' '?' 'Strong' 'Warm' 'Same']\n",
+            " steps of Candidate Elimination Algorithm 2\n",
+            "['Sunny' 'Warm' '?' 'Strong' 'Warm' 'Same']\n",
+            "[['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?']]\n",
+            "['Sunny' 'Warm' '?' 'Strong' 'Warm' 'Same']\n",
+            " steps of Candidate Elimination Algorithm 3\n",
+            "['Sunny' 'Warm' '?' 'Strong' 'Warm' 'Same']\n",
+            "[['Sunny', '?', '?', '?', '?', '?'], ['?', 'Warm', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', 'Same']]\n",
+            "['Sunny' 'Warm' '?' 'Strong' '?' '?']\n",
+            " steps of Candidate Elimination Algorithm 4\n",
+            "['Sunny' 'Warm' '?' 'Strong' '?' '?']\n",
+            "[['Sunny', '?', '?', '?', '?', '?'], ['?', 'Warm', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?'], ['?', '?', '?', '?', '?', '?']]\n",
+            "Final Specific_h:\n",
+            "['Sunny' 'Warm' '?' 'Strong' '?' '?']\n",
+            "Final General_h:\n",
+            "[['Sunny', '?', '?', '?', '?', '?'], ['?', 'Warm', '?', '?', '?', '?']]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "eaf37093"
+      },
+      "source": [
+        "## Comparison of Results: Find-S vs. Candidate Elimination\n",
+        "\n",
+        "Based on the outputs of the two executed cells, here is how the results compare:\n",
+        "\n",
+        "### 1. Final Hypotheses\n",
+        "* **Find-S Final Hypothesis ($S$):**  \n",
+        "  `['Sunny', 'Warm', '?', 'Strong', '?', '?']`\n",
+        "* **Candidate Elimination Final Hypotheses:**\n",
+        "  * **Specific Boundary ($S$):** `['Sunny', 'Warm', '?', 'Strong', '?', '?']`\n",
+        "  * **General Boundary ($G$):** `[['Sunny', '?', '?', '?', '?', '?'], ['?', 'Warm', '?', '?', '?', '?']]`\n",
+        "\n",
+        "### 2. Analytical Comparison\n",
+        "\n",
+        "| Feature | Find-S | Candidate Elimination |\n",
+        "| :--- | :--- | :--- |\n",
+        "| **Approach** | Bottom-up (Generalizes from specific cases) | Bidirectional (Generalizes $S$ and Specializes $G$ simultaneously) |\n",
+        "| **Use of Positive Examples** | Used to generalize the specific hypothesis. | Used to generalize $S$ and discard inconsistent hypotheses in $G$. |\n",
+        "| **Use of Negative Examples** | Ignored. | Used to specialize the general boundary $G$. |\n",
+        "| **Output completeness** | Outputs a single, maximally specific hypothesis. | Outputs the entire **Version Space** (the set of all consistent hypotheses bounded by $S$ and $G$). |\n",
+        "| **Robustness to Noise** | Poor (cannot detect inconsistencies or noise). | Better representation, but highly sensitive to noisy data as the version space can empty out. |"
+      ]
+    }
+  ]
+}
