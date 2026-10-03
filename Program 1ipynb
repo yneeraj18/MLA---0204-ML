@@ -1,0 +1,109 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyNPHy7naOBrMK1CaGztg5sr",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/yneeraj18/MLA---0204-ML/blob/main/Program%201ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "O2xLG8Ce0_pn",
+        "outputId": "65035691-7840-4eca-9d76-b22b713b5cd6"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "The training instances are:\n",
+            "['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'yes']\n",
+            "['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'yes']\n",
+            "['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'no']\n",
+            "['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'yes']\n",
+            "\n",
+            " The total number of training instances are :  4\n",
+            "\n",
+            " The initial hypothesis is : \n",
+            "['0', '0', '0', '0', '0', '0']\n",
+            "\n",
+            " The hypothesis for the training instance 1 is :\n",
+            " ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same']\n",
+            "\n",
+            " The hypothesis for the training instance 2 is :\n",
+            " ['Sunny', 'Warm', '?', 'Strong', 'Warm', 'Same']\n",
+            "\n",
+            " The hypothesis for the training instance 3 is :\n",
+            " ['Sunny', 'Warm', '?', 'Strong', 'Warm', 'Same']\n",
+            "\n",
+            " The hypothesis for the training instance 4 is :\n",
+            " ['Sunny', 'Warm', '?', 'Strong', '?', '?']\n",
+            "\n",
+            " The Maximally specific hypothesis for the training instance is \n",
+            "['Sunny', 'Warm', '?', 'Strong', '?', '?']\n"
+          ]
+        }
+      ],
+      "source": [
+        "import csv\n",
+        "\n",
+        "# Defining the training data directly as a list of lists\n",
+        "# Attributes: Sky, AirTemp, Humidity, Wind, Water, Forecast, EnjoySport (Target)\n",
+        "a = [\n",
+        "    ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'yes'],\n",
+        "    ['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'yes'],\n",
+        "    ['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'no'],\n",
+        "    ['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'yes']\n",
+        "]\n",
+        "\n",
+        "print(\"The training instances are:\")\n",
+        "for row in a:\n",
+        "    print(row)\n",
+        "\n",
+        "print(\"\\n The total number of training instances are : \", len(a))\n",
+        "num_attribute = len(a[0]) - 1\n",
+        "\n",
+        "print(\"\\n The initial hypothesis is : \")\n",
+        "hypothesis = ['0'] * num_attribute\n",
+        "print(hypothesis)\n",
+        "\n",
+        "for i in range(0, len(a)):\n",
+        "    if a[i][num_attribute] == 'yes':\n",
+        "        for j in range(0, num_attribute):\n",
+        "            if hypothesis[j] == '0' or hypothesis[j] == a[i][j]:\n",
+        "                hypothesis[j] = a[i][j]\n",
+        "            else:\n",
+        "                hypothesis[j] = '?'\n",
+        "    print(\"\\n The hypothesis for the training instance {} is :\\n\".format(i + 1), hypothesis)\n",
+        "\n",
+        "print(\"\\n The Maximally specific hypothesis for the training instance is \")\n",
+        "print(hypothesis)"
+      ]
+    }
+  ]
+}
